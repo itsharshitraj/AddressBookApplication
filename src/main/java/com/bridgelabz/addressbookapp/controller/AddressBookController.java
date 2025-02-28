@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @RestController
@@ -30,6 +30,11 @@ public class AddressBookController {
         return addressBookService.getContactById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<AddressBook>> getContactsByName(@PathVariable String name) {
+        List<AddressBook> contacts = addressBookService.getContactsByName(name);
+        return contacts.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(contacts);
     }
 
     @PostMapping
