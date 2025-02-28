@@ -4,12 +4,12 @@ import com.bridgelabz.addressbookapp.dto.AddressBookDTO;
 import com.bridgelabz.addressbookapp.model.AddressBook;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 @Service
 public class AddressBookService {
+
     private final List<AddressBook> contacts = new ArrayList<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
@@ -22,8 +22,13 @@ public class AddressBookService {
                 .filter(contact -> contact.getId().equals(id))
                 .findFirst();
     }
+    public List<AddressBook> getContactsByName(String name) {
+        return contacts.stream()
+                .filter(contact -> contact.getName().equalsIgnoreCase(name))
+                .collect(Collectors.toList());
+    }
 
-    public AddressBook addContact(AddressBookDTO addressBookDTO) {
+        public AddressBook addContact(AddressBookDTO addressBookDTO) {
         AddressBook contact = new AddressBook(
                 idCounter.getAndIncrement(),
                 addressBookDTO.getName(),
