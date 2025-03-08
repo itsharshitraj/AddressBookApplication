@@ -5,6 +5,8 @@ import com.bridgelabz.addressbookapp.model.AddressBook;
 import org.springframework.http.ResponseEntity;
 import com.bridgelabz.addressbookapp.service.AddressBookService;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -41,13 +43,13 @@ public class AddressBookController {
     }
 
     @PostMapping
-    public ResponseEntity<AddressBook> addContact(@RequestBody AddressBookDTO addressBookDTO) {
+    public ResponseEntity<AddressBook> addContact(@Valid @RequestBody AddressBookDTO addressBookDTO) {
         log.info("Adding new contact: {}", addressBookDTO);
         return ResponseEntity.ok(addressBookService.addContact(addressBookDTO));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AddressBook> updateContact(@PathVariable Long id, @RequestBody AddressBookDTO addressBookDTO) {
+    public ResponseEntity<AddressBook> updateContact(@PathVariable Long id,@Valid @RequestBody AddressBookDTO addressBookDTO) {
         log.info("Updating contact with ID: {}", id);
         return addressBookService.updateContact(id, addressBookDTO)
                 .map(ResponseEntity::ok)
