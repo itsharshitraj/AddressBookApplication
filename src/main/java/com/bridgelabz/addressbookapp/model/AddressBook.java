@@ -1,9 +1,22 @@
 package com.bridgelabz.addressbookapp.model;
 
+import jakarta.persistence.*;
+
+@Entity  // Marks this class as a JPA entity
+@Table(name = "contacts")  // Maps to "contacts" table in MySQL
 public class AddressBook {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-increment ID
     private Long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "phone_number", unique = true, nullable = false)
     private String phoneNumber;
+
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     public AddressBook() {}
