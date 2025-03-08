@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j  // Enables Lombok logging
@@ -31,9 +33,8 @@ public class AddressBookController {
     @GetMapping("/{id}")
     public ResponseEntity<AddressBook> getContactById(@PathVariable Long id) {
         log.info("Fetching contact with ID: {}", id);
-        return addressBookService.getContactById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        AddressBook contact = addressBookService.getContactById(id); // No Optional
+        return ResponseEntity.ok(contact);
     }
     @GetMapping("/name/{name}")
     public ResponseEntity<List<AddressBook>> getContactsByName(@PathVariable String name) {
@@ -45,23 +46,25 @@ public class AddressBookController {
     @PostMapping
     public ResponseEntity<AddressBook> addContact(@Valid @RequestBody AddressBookDTO addressBookDTO) {
         log.info("Adding new contact: {}", addressBookDTO);
-        return ResponseEntity.ok(addressBookService.addContact(addressBookDTO));
+        AddressBook contact = addressBookService.addContact(addressBookDTO);
+        return ResponseEntity.ok(contact);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AddressBook> updateContact(@PathVariable Long id,@Valid @RequestBody AddressBookDTO addressBookDTO) {
         log.info("Updating contact with ID: {}", id);
-        return addressBookService.updateContact(id, addressBookDTO)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        AddressBook updatedContact = addressBookService.updateContact(id, addressBookDTO); // No Optional
+        return ResponseEntity.ok(updatedContact);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteContact(@PathVariable Long id) {
         log.info("Deleting contact with ID: {}", id);
-        return addressBookService.deleteContact(id) ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.notFound().build();
+        addressBookService.deleteContact(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Contact with ID " + id + " deleted successfully");
+        return ResponseEntity.ok(response);
     }
 
 }

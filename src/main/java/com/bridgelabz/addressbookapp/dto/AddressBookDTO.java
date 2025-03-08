@@ -7,8 +7,9 @@ import lombok.Data;
 @Data
 public class AddressBookDTO {
 
+
     @NotEmpty(message = "Name cannot be empty")
-    @Pattern(regexp = "^[A-Z][a-zA-Z]{2,}$", message = "Name must start with a capital letter and have at least 3 characters")
+    @Pattern(regexp = "^[A-Z][a-zA-Z ]{2,}$", message = "Name must start with a capital letter and have at least 3 characters")
     private String name;
 
     @NotEmpty(message = "Phone number cannot be empty")
@@ -16,7 +17,7 @@ public class AddressBookDTO {
     private String phoneNumber;
 
     @NotEmpty(message = "Email cannot be empty")
-    @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", message = "Invalid email format")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "Invalid email format")
     private String email;
 
     public AddressBookDTO() {}
