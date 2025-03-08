@@ -1,18 +1,22 @@
 package com.bridgelabz.addressbookapp.dto;
-import jakarta.validation.constraints.NotNull;
+
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+
 @Data
 public class AddressBookDTO {
 
-    @NotNull(message = "Name cannot be empty")
+    @NotEmpty(message = "Name cannot be empty")
     @Pattern(regexp = "^[A-Z][a-zA-Z]{2,}$", message = "Name must start with a capital letter and have at least 3 characters")
     private String name;
 
-    @NotNull(message = "Phone number cannot be empty")
+    @NotEmpty(message = "Phone number cannot be empty")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
     private String phoneNumber;
 
-    @NotNull(message = "Email cannot be empty")
+    @NotEmpty(message = "Email cannot be empty")
+    @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$", message = "Invalid email format")
     private String email;
 
     public AddressBookDTO() {}
