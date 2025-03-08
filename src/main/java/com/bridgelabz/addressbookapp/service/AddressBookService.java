@@ -2,56 +2,54 @@ package com.bridgelabz.addressbookapp.service;
 
 import com.bridgelabz.addressbookapp.dto.AddressBookDTO;
 import com.bridgelabz.addressbookapp.model.AddressBook;
+import com.bridgelabz.addressbookapp.repository.AddressBookRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class AddressBookService {
 
-    private final List<AddressBook> contacts = new ArrayList<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private final AddressBookRepository addressBookRepository;
+    public AddressBookService(AddressBookRepository addressBookRepository) {
+        this.addressBookRepository = addressBookRepository;
+    }
 
     public List<AddressBook> getAllContacts() {
-        return contacts;
+        return addressBookRepository.findAll(); // ✅ Fetch from DB
     }
 
     public Optional<AddressBook> getContactById(Long id) {
-        return contacts.stream()
-                .filter(contact -> contact.getId().equals(id))
-                .findFirst();
-    }
-    public List<AddressBook> getContactsByName(String name) {
-        return contacts.stream()
-                .filter(contact -> contact.getName().equalsIgnoreCase(name))
-                .collect(Collectors.toList());
+        return addressBookRepository.findById(id); // ✅ Fetch from DB by ID
     }
 
-        public AddressBook addContact(AddressBookDTO addressBookDTO) {
-        AddressBook contact = new AddressBook(
-                idCounter.getAndIncrement(),
-                addressBookDTO.getName(),
-                addressBookDTO.getPhoneNumber(),
-                addressBookDTO.getEmail()
-        );
-        contacts.add(contact);
-        return contact;
+    public List<AddressBook> getContactsByName(String name) {
+        return addressBookRepository.findByNameIgnoreCase(name); // ✅ Fetch from DB by Name
+    }
+
+    public AddressBook addContact(AddressBookDTO addressBookDTO) {
+        AddressBook contact = new AddressBook(null, addressBookDTO.getName(), addressBookDTO.getPhoneNumber(), addressBookDTO.getEmail());
+        return addressBookRepository.save(contact); // ✅ Store in DB
     }
 
     public Optional<AddressBook> updateContact(Long id, AddressBookDTO addressBookDTO) {
-        for (AddressBook contact : contacts) {
-            if (contact.getId().equals(id)) {
-                contact.setName(addressBookDTO.getName());
-                contact.setPhoneNumber(addressBookDTO.getPhoneNumber());
-                contact.setEmail(addressBookDTO.getEmail());
-                return Optional.of(contact);
-            }
+        Optional<AddressBook> existingContact = addressBookRepository.findById(id);
+        if (existingContact.isPresent()) {
+            AddressBook contact = existingContact.get();
+            contact.setName(addressBookDTO.getName());
+            contact.setPhoneNumber(addressBookDTO.getPhoneNumber());
+            contact.setEmail(addressBookDTO.getEmail());
+            return Optional.of(addressBookRepository.save(contact)); // ✅ Update in DB
         }
         return Optional.empty();
     }
 
     public boolean deleteContact(Long id) {
-        return contacts.removeIf(contact -> contact.getId().equals(id));
+        if (addressBookRepository.existsById(id)) {
+            addressBookRepository.deleteById(id); // ✅ Delete from DB
+            return true;
+        }
+        return false;
     }
 }
